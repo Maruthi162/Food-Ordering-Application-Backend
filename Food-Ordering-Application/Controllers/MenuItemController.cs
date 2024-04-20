@@ -36,6 +36,7 @@ namespace Food_Ordering_Application.Controllers
         public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItemsWithCategoryAndRestaurant()
         {
             // Eager loading using Include method
+            //if we want we can select only required fields using .Select() instead of Include
             var menuItems = await _context.MenuItems
                 .Include(mi => mi.Category)
                 .Include(mi => mi.Restaurant)
