@@ -16,7 +16,7 @@ namespace Food_Ordering_Application
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //Confiduring DbContext
+            //Configuring DbContext
             var configuration = builder.Configuration;
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<FlashFoodsContext>(options => options.UseSqlServer(connectionString));
@@ -48,6 +48,7 @@ namespace Food_Ordering_Application
 
             // Add services to the container.
             builder.Services.AddScoped<IMenuItemServices, MenuItemServices>();
+            builder.Services.AddScoped<IRestaurantRepo, RestaurantRepo>();
 
             builder.Services.AddControllersWithViews()
             .AddNewtonsoftJson(options =>
@@ -109,11 +110,15 @@ namespace Food_Ordering_Application
 
             app.UseCors("CorsPolicy");
 
+            // Make sure Rdirection -> Authentication -> Authorization order should be same
+
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseAuthentication();
+            
 
 
             app.MapControllers();

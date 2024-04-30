@@ -7,7 +7,7 @@
         public string? Name { get; set; }
 
         public string? Description { get; set; }
-        public int? PhoneNum {  get; set; }
+        public string? PhoneNum {  get; set; }
         public string? Imgurl {  get; set; }
 
         public string? UserId { get; set; } // Foreign key
