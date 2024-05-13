@@ -4,6 +4,7 @@ using Food_Ordering_Application.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Food_Ordering_Application.Migrations
 {
     [DbContext(typeof(FlashFoodsContext))]
-    partial class FlashFoodsContextModelSnapshot : ModelSnapshot
+    [Migration("20240501054948_UserFavoritesTable")]
+    partial class UserFavoritesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

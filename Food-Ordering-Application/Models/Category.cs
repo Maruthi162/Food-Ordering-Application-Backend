@@ -8,6 +8,7 @@ namespace Food_Ordering_Application.Models
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? ImgUrl {  get; set; }
+        public bool IsFavorite {  get; set; }
 
         // Add other category properties as needed
         [JsonIgnore]

@@ -4,6 +4,7 @@ using Food_Ordering_Application.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Food_Ordering_Application.Migrations
 {
     [DbContext(typeof(FlashFoodsContext))]
-    partial class FlashFoodsContextModelSnapshot : ModelSnapshot
+    [Migration("20240501045025_FavoriteColumnsAgain")]
+    partial class FavoriteColumnsAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -346,42 +349,6 @@ namespace Food_Ordering_Application.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Food_Ordering_Application.Models.UserFavoriteMenuItems", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("MenuItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserFavoriteMenuItemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id", "MenuItemId");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.ToTable("UserFavoriteMenuItems");
-                });
-
-            modelBuilder.Entity("Food_Ordering_Application.Models.UserFavoriteRestaurants", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("RestaurantId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("userFavoriteRestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id", "RestaurantId");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("UserFavoriteRestaurants");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -411,21 +378,21 @@ namespace Food_Ordering_Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6e648f43-6f7c-4029-9872-029f49c36f3b",
+                            Id = "4fdd8725-9f75-45ab-9e84-4f26c5cdabcf",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "1a412c5e-9c2f-4c2b-84f9-3eed2c48e305",
+                            Id = "927498c3-d311-48aa-b2e4-016d90764208",
                             ConcurrencyStamp = "2",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         },
                         new
                         {
-                            Id = "df7dd7a1-5e68-4ac6-b53c-3925709a8704",
+                            Id = "f0a78449-d7ac-4c6a-8267-8892e3bfce9b",
                             ConcurrencyStamp = "3",
                             Name = "Owner",
                             NormalizedName = "Owner"
@@ -645,44 +612,6 @@ namespace Food_Ordering_Application.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Food_Ordering_Application.Models.UserFavoriteMenuItems", b =>
-                {
-                    b.HasOne("Food_Ordering_Application.Models.User", "User")
-                        .WithMany("favoriteMenuItems")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Food_Ordering_Application.Models.MenuItem", "MenuItem")
-                        .WithMany("FavoriteMenuItems")
-                        .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MenuItem");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Food_Ordering_Application.Models.UserFavoriteRestaurants", b =>
-                {
-                    b.HasOne("Food_Ordering_Application.Models.User", "User")
-                        .WithMany("favoriteRestaurants")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Food_Ordering_Application.Models.Restaurant", "Restaurant")
-                        .WithMany("UserFavoriteRestaurants")
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Restaurant");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -739,11 +668,6 @@ namespace Food_Ordering_Application.Migrations
                     b.Navigation("MenuItems");
                 });
 
-            modelBuilder.Entity("Food_Ordering_Application.Models.MenuItem", b =>
-                {
-                    b.Navigation("FavoriteMenuItems");
-                });
-
             modelBuilder.Entity("Food_Ordering_Application.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
@@ -758,8 +682,6 @@ namespace Food_Ordering_Application.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("UserFavoriteRestaurants");
                 });
 
             modelBuilder.Entity("Food_Ordering_Application.Models.User", b =>
@@ -771,10 +693,6 @@ namespace Food_Ordering_Application.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("favoriteMenuItems");
-
-                    b.Navigation("favoriteRestaurants");
                 });
 #pragma warning restore 612, 618
         }

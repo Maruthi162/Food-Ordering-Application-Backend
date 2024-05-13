@@ -49,6 +49,7 @@ namespace Food_Ordering_Application
             // Add services to the container.
             builder.Services.AddScoped<IMenuItemServices, MenuItemServices>();
             builder.Services.AddScoped<IRestaurantRepo, RestaurantRepo>();
+            builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 
             builder.Services.AddControllersWithViews()
             .AddNewtonsoftJson(options =>

@@ -10,6 +10,8 @@ namespace Food_Ordering_Application.Models
         public ICollection<Review> Reviews { get; set; }
         public ICollection<Address> Addresses { get; set; } // Collection of addresses for a user
         public ICollection<Payment> Payments { get; set; }
+        public ICollection<UserFavoriteRestaurants> favoriteRestaurants { get; set; }
+        public ICollection<UserFavoriteMenuItems> favoriteMenuItems { get; set;}
 
     }
 }

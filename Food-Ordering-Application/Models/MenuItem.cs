@@ -18,5 +18,6 @@
         // Foreign key to link with Restaurant
         public int RestaurantId { get; set; }
         public Restaurant? Restaurant { get; set; }
+        public ICollection<UserFavoriteMenuItems> FavoriteMenuItems { get; set;}
     }
 }

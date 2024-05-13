@@ -3,6 +3,7 @@ using Food_Ordering_Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.EntityFrameworkCore;
 
 namespace Food_Ordering_Application.Controllers
@@ -14,12 +15,13 @@ namespace Food_Ordering_Application.Controllers
         private readonly FlashFoodsContext _context;
         private readonly IMenuItemServices _menuItemServices;
         private readonly IRestaurantRepo _restaurantRepo;
-
-        public CustomerController(FlashFoodsContext context, IMenuItemServices menuItemServices, IRestaurantRepo restaurantRepo)
+        private readonly ICategoryServices _categoryServices;
+        public CustomerController(FlashFoodsContext context, IMenuItemServices menuItemServices, IRestaurantRepo restaurantRepo, ICategoryServices categoryServices)
         {
             _context = context;
             _menuItemServices = menuItemServices;
             _restaurantRepo = restaurantRepo;
+            _categoryServices = categoryServices;
         }
 
         [HttpGet]
@@ -59,10 +61,10 @@ namespace Food_Ordering_Application.Controllers
             return Ok(rests);
         }
         //getting categpries for particular restaurant
-        [Authorize]
+        //[Authorize]  if we use authorize we need to pass authentication credentials for every endpoint call in angular, we will implement this later
         [HttpGet]
         [Route("get Category by rest")]
-        public async Task<ActionResult> GetCategoriesOfRest(int restId)
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategoriesOfRest(int restId)
         {
             var categories = await _restaurantRepo.GetCategoriesByRest(restId);
             return Ok(categories);
@@ -78,6 +80,69 @@ namespace Food_Ordering_Application.Controllers
 
             return Ok(items);
         }
-        
+
+        [HttpGet]
+        [Route("Get User Favorite restaurants")]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavRestaurants(string userId)
+        {
+            var favRests =await  _restaurantRepo.GetUserFavRestaurants(userId);
+            return Ok(favRests);
+        }
+
+        [HttpPost]
+        [Route("AddRestaurantToFavorite")]
+        public async Task<ActionResult> AddRestTozUserFav(string userId, int restId)
+        {
+            string msg=await _restaurantRepo.AddFavRestaurant(userId, restId);
+
+            return Ok(new { message = msg });
+        }
+
+        [HttpDelete]
+        [Route("Remove Restaurant from favourite")]
+        public async Task<ActionResult> DeleteRestaurantFromFavourite(int restId, string userId)
+        {
+            await _restaurantRepo.RemoveFromFavourites(restId, userId);
+            return Ok(new { message = "Restaurant Removed from Favourites" });
+        }
+
+        [HttpGet]
+        [Route("Get-Fav-Items")]
+        public async Task<ActionResult<IEnumerable<MenuItem>>> GetUserFavMenuItems(string userId)
+        {
+            var favs=await _menuItemServices.GetUserFavMenuItems(userId);
+            return Ok(favs);
+        }
+
+        [HttpPost]
+        [Route("add-to-favMenu")]
+        public async Task<ActionResult> AddtoFavMenuItems(string userId,int menuId)
+        {
+            string msg=await _menuItemServices.AddFavMenuItem(userId, menuId);
+            return Ok(new { message = msg });
+        }
+
+        [HttpDelete]
+        [Route("Remove-favItem")]
+        public async Task<ActionResult> RemoveFromFavitems(int menuId, string userId)
+        {
+            await _menuItemServices.RemoveFromFavouriteMenu(menuId, userId);
+            return Ok(new { msg="successfuly Removed from fav" });
+        }
+
+        [HttpGet]
+        [Route("GetAllCategories")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetAllCategories()
+        {
+            var cats= await _categoryServices.GetAllCategories();
+            return Ok(cats);
+        }
+        [HttpGet]
+        [Route("GetMenuItemsByCategoryId")]
+        public async Task<ActionResult<IEnumerable<MenuItem>>>  GetMenuItemsByCategoryId(int categoryId)
+        {
+            var res= await _menuItemServices.GetMenuItemsByCategoryId(categoryId);
+            return Ok(res);
+        }      
     }
 }

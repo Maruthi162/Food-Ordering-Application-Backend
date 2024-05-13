@@ -9,6 +9,7 @@
         public string? Description { get; set; }
         public string? PhoneNum {  get; set; }
         public string? Imgurl {  get; set; }
+        public bool IsFavorite {  get; set; }
 
         public string? UserId { get; set; } // Foreign key
 
@@ -20,5 +21,6 @@
         public ICollection<Review> Reviews { get; set; }
         public ICollection<Order> Orders { get; set; } // Collection of orders for the restaurant
         public ICollection<Address> Addresses { get; set; }
+        public ICollection<UserFavoriteRestaurants> UserFavoriteRestaurants { get; set; }
     }
 }

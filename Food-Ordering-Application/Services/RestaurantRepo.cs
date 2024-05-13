@@ -18,19 +18,10 @@ namespace Food_Ordering_Application.Services
             return res;
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetCategoriesByRest(int restId)
+        public async Task<IEnumerable<Category>> GetCategoriesByRest(int restId)
         {
-            var categories= await _context.MenuItems.Where(m=>m.RestaurantId==restId).Select(m=>m.Category).Distinct().ToListAsync();
-
-            var categoryDTOs = categories.Select(c => new CategoryDTO
-            {
-                CategoryId = c.CategoryId,
-                CategoryName = c.Name,
-                CategoryDescription=c.Description,
-                CategoryImgUrl=c.ImgUrl
-            }).ToList();
-
-            return categoryDTOs;
+            var RestCats= await _context.Categories.Where(c=>c.MenuItems.Where(m=>m.RestaurantId==restId).Any()).ToListAsync();
+            return RestCats;
         }
 
         public async Task<IEnumerable<MenuItemDto>> GetMenuItemsByRestAndCat(int catId, int restId)
@@ -48,6 +39,43 @@ namespace Food_Ordering_Application.Services
             }).ToListAsync();
 
             return Items;
+        }
+
+        public async Task<IEnumerable<Restaurant>> GetUserFavRestaurants(string userId)
+        {
+            var favRests = await _context.UserFavoriteRestaurants.Where(ufr => ufr.Id == userId).Select(fr => fr.Restaurant).ToListAsync();
+            //ToListAsync() will never return null, if lisy null, it will return empty list, no need to check for null
+            return favRests;
+        }
+        public async Task<string> AddFavRestaurant(string userId, int restId)
+        {
+            var existingfavRest= await _context.UserFavoriteRestaurants.FirstOrDefaultAsync(ufr=>ufr.Id == userId && ufr.RestaurantId==restId);
+            if (existingfavRest != null)
+            {
+                return "alredy favorited";
+            }
+            // create new favorite
+            var newFavRest = new UserFavoriteRestaurants
+            {
+                Id = userId,
+                RestaurantId = restId,
+            };
+            //add favorite to table
+            _context.UserFavoriteRestaurants.Add(newFavRest);
+            //save the changes to context
+            await _context.SaveChangesAsync();
+            return "Added to Favorite";
+        }
+
+        public async Task RemoveFromFavourites(int restId, string userId)
+        {
+            UserFavoriteRestaurants favRestToBeRemoved =await _context.UserFavoriteRestaurants.FirstOrDefaultAsync(ufr=>ufr.RestaurantId==restId && ufr.Id==userId);
+            if(favRestToBeRemoved != null )
+            {
+                _context.UserFavoriteRestaurants.Remove(favRestToBeRemoved);
+                _context.SaveChanges();
+            }
+            
         }
 
 

@@ -22,6 +22,8 @@ namespace Food_Ordering_Application.Models
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<UserFavoriteRestaurants> UserFavoriteRestaurants { get; set; }
+        public DbSet<UserFavoriteMenuItems> UserFavoriteMenuItems { get; set; }
 
 
         //Seeding Roles
@@ -89,6 +91,36 @@ namespace Food_Ordering_Application.Models
             .WithMany()
             .HasForeignKey(o => o.PaymentId)
             .IsRequired(false);
+
+            //configuring primary key for userFavoriteRestaurant table and giving relationships
+            modelBuilder.Entity<UserFavoriteRestaurants>()
+                .HasKey(ufr => new { ufr.Id, ufr.RestaurantId });  //Define composite primary key
+            // Configure many-to-many relationship for favoriteRestaurants
+            modelBuilder.Entity<UserFavoriteRestaurants>()
+                .HasOne(ufr => ufr.User)
+                .WithMany(u => u.favoriteRestaurants)
+                .HasForeignKey(ufr => ufr.Id);
+
+            modelBuilder.Entity<UserFavoriteRestaurants>()
+                .HasOne(ufr => ufr.Restaurant)
+                .WithMany(r => r.UserFavoriteRestaurants)
+                .HasForeignKey(ufr => ufr.RestaurantId);
+
+            //configuring priamry key for userFavoriteMeniItems table and giving relatinships
+
+            modelBuilder.Entity<UserFavoriteMenuItems>()
+                .HasKey(u => new { u.Id, u.MenuItemId }); // Define composite primary key
+
+            // Configure many-to-many relationship
+            modelBuilder.Entity<UserFavoriteMenuItems>()
+                .HasOne<User>(ufmi => ufmi.User)
+                .WithMany(u => u.favoriteMenuItems)
+                .HasForeignKey(ufmi => ufmi.Id);
+
+            modelBuilder.Entity<UserFavoriteMenuItems>()
+                .HasOne<MenuItem>(ufmi => ufmi.MenuItem)
+                .WithMany(m => m.FavoriteMenuItems)
+                .HasForeignKey(ufmi => ufmi.MenuItemId);
         }
 
     }

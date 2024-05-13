@@ -7,6 +7,7 @@
         public string? RestaurantDescription { get; set; }
 
         public string? PhoneNum {  get; set; }   
+        public bool IsFavorite {  get; set; }
         public string? url { get; set; }
 
         

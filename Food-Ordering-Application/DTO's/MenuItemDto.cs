@@ -8,6 +8,7 @@
         public string? MenuItemDescription { get; set; }
         public string? MenuItemAvilability {  get; set; }
         public string? MenuItemUrl {  get; set; }
+        public bool IsFavorite {  get; set; }
 
     }
 }

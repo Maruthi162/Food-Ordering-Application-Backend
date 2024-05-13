@@ -100,8 +100,9 @@ namespace Food_Ordering_Application.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                    expiration = jwtToken.ValidTo
-                });
+                    expiration = jwtToken.ValidTo,
+                    userId = user.Id
+                }) ;
 
             }
 
