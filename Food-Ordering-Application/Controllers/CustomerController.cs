@@ -16,12 +16,14 @@ namespace Food_Ordering_Application.Controllers
         private readonly IMenuItemServices _menuItemServices;
         private readonly IRestaurantRepo _restaurantRepo;
         private readonly ICategoryServices _categoryServices;
-        public CustomerController(FlashFoodsContext context, IMenuItemServices menuItemServices, IRestaurantRepo restaurantRepo, ICategoryServices categoryServices)
+        private readonly ILogger<CustomerController> _logger;
+        public CustomerController(FlashFoodsContext context, IMenuItemServices menuItemServices, IRestaurantRepo restaurantRepo, ICategoryServices categoryServices, ILogger<CustomerController> logger)
         {
             _context = context;
             _menuItemServices = menuItemServices;
             _restaurantRepo = restaurantRepo;
             _categoryServices = categoryServices;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -85,8 +87,29 @@ namespace Food_Ordering_Application.Controllers
         [Route("Get User Favorite restaurants")]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavRestaurants(string userId)
         {
-            var favRests =await  _restaurantRepo.GetUserFavRestaurants(userId);
-            return Ok(favRests);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("UserId is required.");
+            }
+
+            try
+            {
+                var favRests = await _restaurantRepo.GetUserFavRestaurants(userId);
+
+                if (favRests == null || !favRests.Any())
+                {
+                    return NotFound("No favorite restaurants found for the user.");
+                }
+
+                return Ok(favRests);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while processing the request for user {UserId}", userId);
+                // Return a generic error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
         }
 
         [HttpPost]

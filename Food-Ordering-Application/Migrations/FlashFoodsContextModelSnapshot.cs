@@ -57,6 +57,33 @@ namespace Food_Ordering_Application.Migrations
                     b.ToTable("Addresses");
                 });
 
+            modelBuilder.Entity("Food_Ordering_Application.Models.CartItems", b =>
+                {
+                    b.Property<int>("CartItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
+
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CartItemId");
+
+                    b.HasIndex("MenuItemId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("Food_Ordering_Application.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -174,12 +201,20 @@ namespace Food_Ordering_Application.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<int>("menuItemId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("OrderDetailsId");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("menuItemId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -411,21 +446,21 @@ namespace Food_Ordering_Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6e648f43-6f7c-4029-9872-029f49c36f3b",
+                            Id = "d22c5f9a-9a4c-45b7-9ac7-61a2a797c2e0",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "1a412c5e-9c2f-4c2b-84f9-3eed2c48e305",
+                            Id = "18ad638f-d4ec-4b29-9269-526f6fec3839",
                             ConcurrencyStamp = "2",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         },
                         new
                         {
-                            Id = "df7dd7a1-5e68-4ac6-b53c-3925709a8704",
+                            Id = "2f36ea7f-47a8-4cfe-84d2-3dd964fd2ca3",
                             ConcurrencyStamp = "3",
                             Name = "Owner",
                             NormalizedName = "Owner"
@@ -546,9 +581,29 @@ namespace Food_Ordering_Application.Migrations
 
                     b.HasOne("Food_Ordering_Application.Models.User", "User")
                         .WithMany("Addresses")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Restaurant");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Food_Ordering_Application.Models.CartItems", b =>
+                {
+                    b.HasOne("Food_Ordering_Application.Models.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Food_Ordering_Application.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
 
                     b.Navigation("User");
                 });
@@ -558,7 +613,7 @@ namespace Food_Ordering_Application.Migrations
                     b.HasOne("Food_Ordering_Application.Models.Category", "Category")
                         .WithMany("MenuItems")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Food_Ordering_Application.Models.Restaurant", "Restaurant")
@@ -576,17 +631,19 @@ namespace Food_Ordering_Application.Migrations
                 {
                     b.HasOne("Food_Ordering_Application.Models.Payment", "Payment")
                         .WithMany()
-                        .HasForeignKey("PaymentId");
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Food_Ordering_Application.Models.Restaurant", "Restaurant")
                         .WithMany("Orders")
                         .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Food_Ordering_Application.Models.User", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Payment");
 
@@ -600,8 +657,16 @@ namespace Food_Ordering_Application.Migrations
                     b.HasOne("Food_Ordering_Application.Models.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Food_Ordering_Application.Models.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("menuItemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
 
                     b.Navigation("Order");
                 });
@@ -611,7 +676,7 @@ namespace Food_Ordering_Application.Migrations
                     b.HasOne("Food_Ordering_Application.Models.User", "User")
                         .WithMany("Payments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -621,7 +686,8 @@ namespace Food_Ordering_Application.Migrations
                 {
                     b.HasOne("Food_Ordering_Application.Models.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Owner");
                 });
@@ -631,13 +697,13 @@ namespace Food_Ordering_Application.Migrations
                     b.HasOne("Food_Ordering_Application.Models.Restaurant", "Restaurant")
                         .WithMany("Reviews")
                         .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Food_Ordering_Application.Models.User", "User")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Restaurant");
@@ -650,13 +716,13 @@ namespace Food_Ordering_Application.Migrations
                     b.HasOne("Food_Ordering_Application.Models.User", "User")
                         .WithMany("favoriteMenuItems")
                         .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Food_Ordering_Application.Models.MenuItem", "MenuItem")
                         .WithMany("FavoriteMenuItems")
                         .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("MenuItem");
@@ -669,13 +735,13 @@ namespace Food_Ordering_Application.Migrations
                     b.HasOne("Food_Ordering_Application.Models.User", "User")
                         .WithMany("favoriteRestaurants")
                         .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Food_Ordering_Application.Models.Restaurant", "Restaurant")
                         .WithMany("UserFavoriteRestaurants")
                         .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Restaurant");

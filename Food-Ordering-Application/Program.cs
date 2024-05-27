@@ -46,10 +46,12 @@ namespace Food_Ordering_Application
                 };
             });
 
+           
             // Add services to the container.
             builder.Services.AddScoped<IMenuItemServices, MenuItemServices>();
             builder.Services.AddScoped<IRestaurantRepo, RestaurantRepo>();
             builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+            builder.Services.AddScoped<ICartRepo, CartServices>();
 
             builder.Services.AddControllersWithViews()
             .AddNewtonsoftJson(options =>
@@ -57,6 +59,8 @@ namespace Food_Ordering_Application
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             
             });
+
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

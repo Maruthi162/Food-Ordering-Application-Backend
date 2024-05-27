@@ -7,9 +7,11 @@ namespace Food_Ordering_Application.Services
     public class RestaurantRepo:IRestaurantRepo
     {
         private readonly FlashFoodsContext _context;
-        public RestaurantRepo(FlashFoodsContext context)
+        private readonly ILogger<RestaurantRepo> _logger;
+        public RestaurantRepo(FlashFoodsContext context, ILogger<RestaurantRepo> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Restaurant>> GetAllRestaurants()
@@ -43,9 +45,21 @@ namespace Food_Ordering_Application.Services
 
         public async Task<IEnumerable<Restaurant>> GetUserFavRestaurants(string userId)
         {
-            var favRests = await _context.UserFavoriteRestaurants.Where(ufr => ufr.Id == userId).Select(fr => fr.Restaurant).ToListAsync();
-            //ToListAsync() will never return null, if lisy null, it will return empty list, no need to check for null
-            return favRests;
+            try
+            {
+                var favRests = await _context.UserFavoriteRestaurants
+                                             .Where(ufr => ufr.Id == userId)
+                                             .Select(fr => fr.Restaurant)
+                                             .ToListAsync();
+                return favRests;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while retrieving favorite restaurants for user {UserId}", userId);
+                throw; // Rethrow the exception to be handled by the calling code
+            }
+
         }
         public async Task<string> AddFavRestaurant(string userId, int restId)
         {

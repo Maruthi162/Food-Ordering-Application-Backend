@@ -60,7 +60,8 @@ namespace Food_Ordering_Application.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImgUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ImgUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsFavorite = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -193,8 +194,7 @@ namespace Food_Ordering_Application.Migrations
                         name: "FK_Payments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -205,8 +205,9 @@ namespace Food_Ordering_Application.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNum = table.Column<int>(type: "int", nullable: true),
+                    PhoneNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Imgurl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsFavorite = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -268,8 +269,7 @@ namespace Food_Ordering_Application.Migrations
                         name: "FK_MenuItems_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "CategoryId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CategoryId");
                     table.ForeignKey(
                         name: "FK_MenuItems_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
@@ -288,6 +288,7 @@ namespace Food_Ordering_Application.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     RestaurantId = table.Column<int>(type: "int", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    PaymentId = table.Column<int>(type: "int", nullable: false),
                     PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeliveryStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ViewedByRestaurant = table.Column<bool>(type: "bit", nullable: false)
@@ -301,11 +302,15 @@ namespace Food_Ordering_Application.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FK_Orders_Payments_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payments",
+                        principalColumn: "PaymentId");
+                    table.ForeignKey(
                         name: "FK_Orders_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
                         principalTable: "Restaurants",
-                        principalColumn: "RestaurantId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RestaurantId");
                 });
 
             migrationBuilder.CreateTable(
@@ -326,14 +331,84 @@ namespace Food_Ordering_Application.Migrations
                         name: "FK_Reviews_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Reviews_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
                         principalTable: "Restaurants",
-                        principalColumn: "RestaurantId",
+                        principalColumn: "RestaurantId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserFavoriteRestaurants",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RestaurantId = table.Column<int>(type: "int", nullable: false),
+                    userFavoriteRestId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFavoriteRestaurants", x => new { x.Id, x.RestaurantId });
+                    table.ForeignKey(
+                        name: "FK_UserFavoriteRestaurants_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserFavoriteRestaurants_Restaurants_RestaurantId",
+                        column: x => x.RestaurantId,
+                        principalTable: "Restaurants",
+                        principalColumn: "RestaurantId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartItems",
+                columns: table => new
+                {
+                    CartItemId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MenuItemId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItems", x => x.CartItemId);
+                    table.ForeignKey(
+                        name: "FK_CartItems_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartItems_MenuItems_MenuItemId",
+                        column: x => x.MenuItemId,
+                        principalTable: "MenuItems",
+                        principalColumn: "MenuItemId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserFavoriteMenuItems",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MenuItemId = table.Column<int>(type: "int", nullable: false),
+                    UserFavoriteMenuItemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFavoriteMenuItems", x => new { x.Id, x.MenuItemId });
+                    table.ForeignKey(
+                        name: "FK_UserFavoriteMenuItems_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserFavoriteMenuItems_MenuItems_MenuItemId",
+                        column: x => x.MenuItemId,
+                        principalTable: "MenuItems",
+                        principalColumn: "MenuItemId");
                 });
 
             migrationBuilder.CreateTable(
@@ -343,17 +418,23 @@ namespace Food_Ordering_Application.Migrations
                     OrderDetailsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    menuItemId = table.Column<int>(type: "int", nullable: false),
+                    quantity = table.Column<int>(type: "int", nullable: false),
+                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderDetails", x => x.OrderDetailsId);
                     table.ForeignKey(
+                        name: "FK_OrderDetails_MenuItems_menuItemId",
+                        column: x => x.menuItemId,
+                        principalTable: "MenuItems",
+                        principalColumn: "MenuItemId");
+                    table.ForeignKey(
                         name: "FK_OrderDetails_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OrderId");
                 });
 
             migrationBuilder.InsertData(
@@ -361,9 +442,9 @@ namespace Food_Ordering_Application.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "05910d79-7f4b-446e-94c3-973a363e747d", "3", "Owner", "Owner" },
-                    { "9f0fc39e-953f-4aee-b304-0c81dc0e19d5", "1", "Admin", "Admin" },
-                    { "a43b6f5a-25a9-432b-bcb0-ba37ed1a4123", "2", "Customer", "Customer" }
+                    { "18ad638f-d4ec-4b29-9269-526f6fec3839", "2", "Customer", "Customer" },
+                    { "2f36ea7f-47a8-4cfe-84d2-3dd964fd2ca3", "3", "Owner", "Owner" },
+                    { "d22c5f9a-9a4c-45b7-9ac7-61a2a797c2e0", "1", "Admin", "Admin" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -416,6 +497,16 @@ namespace Food_Ordering_Application.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartItems_MenuItemId",
+                table: "CartItems",
+                column: "MenuItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartItems_UserId",
+                table: "CartItems",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MenuItems_CategoryId",
                 table: "MenuItems",
                 column: "CategoryId");
@@ -426,9 +517,19 @@ namespace Food_Ordering_Application.Migrations
                 column: "RestaurantId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_menuItemId",
+                table: "OrderDetails",
+                column: "menuItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_OrderId",
                 table: "OrderDetails",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_PaymentId",
+                table: "Orders",
+                column: "PaymentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_RestaurantId",
@@ -459,6 +560,16 @@ namespace Food_Ordering_Application.Migrations
                 name: "IX_Reviews_UserId",
                 table: "Reviews",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFavoriteMenuItems_MenuItemId",
+                table: "UserFavoriteMenuItems",
+                column: "MenuItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFavoriteRestaurants_RestaurantId",
+                table: "UserFavoriteRestaurants",
+                column: "RestaurantId");
         }
 
         /// <inheritdoc />
@@ -483,25 +594,34 @@ namespace Food_Ordering_Application.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "MenuItems");
+                name: "CartItems");
 
             migrationBuilder.DropTable(
                 name: "OrderDetails");
 
             migrationBuilder.DropTable(
-                name: "Payments");
+                name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "UserFavoriteMenuItems");
+
+            migrationBuilder.DropTable(
+                name: "UserFavoriteRestaurants");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "MenuItems");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Restaurants");
