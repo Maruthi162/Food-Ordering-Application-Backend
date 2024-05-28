@@ -39,14 +39,31 @@ namespace Food_Ordering_Application.Controllers
         [Route("add-to-cart")]
         public async Task<ActionResult> AddToCart([FromBody] CartDto cartItem)
         {
-            var cItem=await _context.CartItems.Where(c=>c.MenuItemId==cartItem.menuItemId && c.UserId==cartItem.UserId).FirstOrDefaultAsync();
-            if(cItem != null) 
+            try
             {
-                return BadRequest(new { message = "Item already added to cart" });
-            }
-            _cartRepo.AddItemToCart(cartItem);
+                var existingCartItem = await _context.CartItems
+                    .Where(c => c.MenuItemId == cartItem.menuItemId && c.UserId == cartItem.UserId)
+                    .FirstOrDefaultAsync();
 
-            return Ok(new { message = "Added to cart" });
+                if (existingCartItem != null)
+                {
+                    return BadRequest(new { message = "Item already added to cart" });
+                }
+
+                var result = await _cartRepo.AddItemToCart(cartItem);
+                if (result != "Added to cart successfully")
+                {
+                    return BadRequest(new { message = result });
+                }
+
+                return Ok(new { message = result });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError($"Error adding item to cart: {ex.Message}", ex);
+                return StatusCode(500, new { message = "An error occurred while adding the item to the cart" });
+            }
         }
 
         [HttpPatch]

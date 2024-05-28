@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 
 namespace Food_Ordering_Application
@@ -52,6 +54,18 @@ namespace Food_Ordering_Application
             builder.Services.AddScoped<IRestaurantRepo, RestaurantRepo>();
             builder.Services.AddScoped<ICategoryServices, CategoryServices>();
             builder.Services.AddScoped<ICartRepo, CartServices>();
+            builder.Services.AddScoped<IOrderRepo,OrderServices>();
+            builder.Services.AddScoped<NotificationService>();
+
+            builder.Services.AddSingleton(new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                Credentials = new NetworkCredential(
+                configuration["EmailSettings:Email"],
+                configuration["EmailSettings:Password"]),
+                EnableSsl = true
+            });
 
             builder.Services.AddControllersWithViews()
             .AddNewtonsoftJson(options =>

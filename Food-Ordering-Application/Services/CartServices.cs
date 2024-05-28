@@ -9,9 +9,11 @@ namespace Food_Ordering_Application.Services
 
     {
         private readonly FlashFoodsContext _context;
-        public CartServices(FlashFoodsContext context)
+        private readonly ILogger<CartServices> _logger;
+        public CartServices(FlashFoodsContext context, ILogger<CartServices> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<CartItems>> GetUserCart(string userId)
@@ -22,16 +24,27 @@ namespace Food_Ordering_Application.Services
         }
         public async Task<string> AddItemToCart(CartDto cartItem)
         {
-            var cartItemToAdd = new CartItems
+            try
             {
-                MenuItemId = cartItem.menuItemId,
-                UserId=cartItem.UserId,
-                Quantity=cartItem.quantity
-                
-            };
-            _context.CartItems.Add(cartItemToAdd);
-            await _context.SaveChangesAsync();
-            return "Added to cart successfully";
+                var cartItemToAdd = new CartItems
+                {
+                    MenuItemId = cartItem.menuItemId,
+                    UserId = cartItem.UserId,
+                    Quantity = cartItem.quantity
+                   
+                };
+
+                _context.CartItems.Add(cartItemToAdd);
+                await _context.SaveChangesAsync();
+
+                return "Added to cart successfully";
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError($"Error adding item to cart: {ex.Message}", ex);
+                return "Failed to add item to cart";
+            }
 
         }
         public async Task<string> RemoveItemFromCart(CartDto cartItem)
