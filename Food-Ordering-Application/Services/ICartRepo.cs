@@ -7,7 +7,7 @@ namespace Food_Ordering_Application.Services
     {
         public Task<IEnumerable<CartItems>> GetUserCart(string userId);
         public Task<string> AddItemToCart(CartDto cartItem);
-        public Task<string> RemoveItemFromCart(CartDto cartItem);
+        public Task<string> RemoveItemFromCart(int cartItemId);
         public Task<string> UpdateCartItem(CartDto cartItem);
     }
 }

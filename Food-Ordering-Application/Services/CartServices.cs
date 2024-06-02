@@ -47,11 +47,11 @@ namespace Food_Ordering_Application.Services
             }
 
         }
-        public async Task<string> RemoveItemFromCart(CartDto cartItem)
+        public async Task<string> RemoveItemFromCart(int cartItemId)
         {
             // Find the entity object to remove based on the DTO
             var cartEntity = await _context.CartItems
-                                         .FirstOrDefaultAsync(c => c.UserId == cartItem.UserId && c.MenuItemId == cartItem.menuItemId);
+                                         .FirstOrDefaultAsync(c=>c.CartItemId==cartItemId);
             if (cartEntity == null)
             {
                 return "Item not found in cart";

@@ -16,8 +16,13 @@ namespace Food_Ordering_Application.Services
         }
         public async Task<IEnumerable<Order>> GetAllOrders()
         {
-            var rdrs=await _context.Orders.ToListAsync();
-            return rdrs;
+            return await _context.Orders
+             .Include(o => o.OrderDetails)
+             .ThenInclude(od => od.MenuItem)
+             .Include(o => o.User)
+             .Include(o => o.Restaurant)
+             .Include(o => o.Payment)
+             .ToListAsync();
         }
         public async Task<IEnumerable<Order>> GetOrdersByUserId(string userId)
         {

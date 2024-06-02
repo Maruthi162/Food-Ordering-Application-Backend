@@ -54,6 +54,7 @@ namespace Food_Ordering_Application
             builder.Services.AddScoped<IRestaurantRepo, RestaurantRepo>();
             builder.Services.AddScoped<ICategoryServices, CategoryServices>();
             builder.Services.AddScoped<ICartRepo, CartServices>();
+            builder.Services.AddScoped<IOrderDetailsServices, OrderDetailsServices>();
             builder.Services.AddScoped<IOrderRepo,OrderServices>();
             builder.Services.AddScoped<NotificationService>();
 

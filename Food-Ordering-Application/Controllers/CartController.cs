@@ -81,14 +81,14 @@ namespace Food_Ordering_Application.Controllers
         }
         [HttpDelete]
         [Route("delete-cart")]
-        public async Task<ActionResult> RenoveFromCart(CartDto cartItem)
+        public async Task<ActionResult> RenoveFromCart(int cartItemId)
         {
-            var ci = await _context.CartItems.FirstOrDefaultAsync(c => c.MenuItemId==cartItem.menuItemId && c.UserId == cartItem.UserId);
+            var ci = await _context.CartItems.FirstOrDefaultAsync(c => c.CartItemId==cartItemId);
             if (ci == null)
             {
                 return BadRequest(new { message = "item not exists" });
             }
-            var msg=await _cartRepo.RemoveItemFromCart(cartItem);
+            var msg=await _cartRepo.RemoveItemFromCart(cartItemId);
 
             return Ok(new {message=msg});
         }
