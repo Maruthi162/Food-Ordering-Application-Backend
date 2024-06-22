@@ -54,7 +54,7 @@ namespace Food_Ordering_Application.Controllers
             }
 
         }
-
+        //getting orders of the user by providing the user, we will get the userId when user logins we can get that from auth services in angular
         [HttpGet]
         [Route("get-orders-by-userId")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersbyUserId( [FromQuery] string userId)
