@@ -442,9 +442,9 @@ namespace Food_Ordering_Application.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "18ad638f-d4ec-4b29-9269-526f6fec3839", "2", "Customer", "Customer" },
-                    { "2f36ea7f-47a8-4cfe-84d2-3dd964fd2ca3", "3", "Owner", "Owner" },
-                    { "d22c5f9a-9a4c-45b7-9ac7-61a2a797c2e0", "1", "Admin", "Admin" }
+                    { "2f0fd077-27a4-4d4d-998f-ed77dc879339", "1", "Admin", "Admin" },
+                    { "a86b813f-2ca9-4cec-b0ca-86c082175c28", "3", "Owner", "Owner" },
+                    { "c2da7503-c97a-4361-abcf-1e05d2134ef1", "2", "Customer", "Customer" }
                 });
 
             migrationBuilder.CreateIndex(

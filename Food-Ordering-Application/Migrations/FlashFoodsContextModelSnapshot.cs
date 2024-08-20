@@ -221,11 +221,11 @@ namespace Food_Ordering_Application.Migrations
 
             modelBuilder.Entity("Food_Ordering_Application.Models.Payment", b =>
                 {
-                    b.Property<int?>("PaymentId")
+                    b.Property<int>("PaymentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("PaymentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -446,21 +446,21 @@ namespace Food_Ordering_Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d22c5f9a-9a4c-45b7-9ac7-61a2a797c2e0",
+                            Id = "2f0fd077-27a4-4d4d-998f-ed77dc879339",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "18ad638f-d4ec-4b29-9269-526f6fec3839",
+                            Id = "c2da7503-c97a-4361-abcf-1e05d2134ef1",
                             ConcurrencyStamp = "2",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         },
                         new
                         {
-                            Id = "2f36ea7f-47a8-4cfe-84d2-3dd964fd2ca3",
+                            Id = "a86b813f-2ca9-4cec-b0ca-86c082175c28",
                             ConcurrencyStamp = "3",
                             Name = "Owner",
                             NormalizedName = "Owner"
