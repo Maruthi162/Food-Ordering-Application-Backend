@@ -4,6 +4,7 @@ using Food_Ordering_Application.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Food_Ordering_Application.Migrations
 {
     [DbContext(typeof(FlashFoodsContext))]
-    partial class FlashFoodsContextModelSnapshot : ModelSnapshot
+    [Migration("20240828050541_Changed-retsuarants-relationships")]
+    partial class Changedretsuarantsrelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,6 +264,9 @@ namespace Food_Ordering_Application.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RestaurantId"));
 
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -280,6 +286,8 @@ namespace Food_Ordering_Application.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("RestaurantId");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("UserId");
 
@@ -446,21 +454,21 @@ namespace Food_Ordering_Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d9308177-1748-4f27-a363-638d5d017091",
+                            Id = "549907ab-9aee-4c06-974a-ed62f560f1d4",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "baf00dcb-5c36-4f7e-933a-b907e1fc9570",
+                            Id = "53527bf1-8a9e-4a8c-b5c5-32589a538dea",
                             ConcurrencyStamp = "2",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         },
                         new
                         {
-                            Id = "d19d5dc7-7986-46b6-be13-d4c67f65380c",
+                            Id = "44971c87-e3e0-402f-ac34-9584cdc87e9d",
                             ConcurrencyStamp = "3",
                             Name = "Owner",
                             NormalizedName = "Owner"
@@ -682,10 +690,17 @@ namespace Food_Ordering_Application.Migrations
 
             modelBuilder.Entity("Food_Ordering_Application.Models.Restaurant", b =>
                 {
+                    b.HasOne("Food_Ordering_Application.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Food_Ordering_Application.Models.User", "Owner")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Address");
 
                     b.Navigation("Owner");
                 });

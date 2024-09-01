@@ -98,6 +98,8 @@ namespace Food_Ordering_Application.Models
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.NoAction);
 
+            
+
             modelBuilder.Entity<Order>()
             .HasOne(o => o.Payment)
             .WithMany()

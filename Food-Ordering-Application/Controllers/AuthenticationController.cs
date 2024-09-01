@@ -3,6 +3,7 @@ using Food_Ordering_Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,12 +18,16 @@ namespace Food_Ordering_Application.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AuthenticationController> _logger;
+        private readonly FlashFoodsContext _context;
 
-        public AuthenticationController (UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthenticationController (UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration,ILogger<AuthenticationController> logger, FlashFoodsContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _logger = logger;
+            _context = context;
         }
 
         [HttpPost]
@@ -30,6 +35,7 @@ namespace Food_Ordering_Application.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, string role)
         {
             var UserExist = await _userManager.FindByEmailAsync(registerDto.Email);
+            
             if (UserExist != null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden,
@@ -101,7 +107,8 @@ namespace Food_Ordering_Application.Controllers
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                     expiration = jwtToken.ValidTo,
-                    userId = user.Id
+                    userId = user.Id,
+                    usernmae = user.UserName
                 }) ;
 
             }
@@ -124,6 +131,17 @@ namespace Food_Ordering_Application.Controllers
                 );
             return token;
         }
+        /*[HttpGet]
+        [Route("MyProfile")]
+        public async Task<IActionResult> GetUserDetails(string userId)
+        {
+
+            var userDetails= await _context.Users.Where(u=>u.Id == userId).Include(u=>u.Addresses).ToListAsync();
+            return Ok(userDetails);
+        }*/
 
     }
+
+   
+   
 }

@@ -30,7 +30,7 @@ namespace Food_Ordering_Application.Services
             return userOrders;
         }
         //Logic to place orders from cart
-        public async Task<string> PlaceOrderAsync(string userId, string paymentMethod   )
+        public async Task<string> PlaceOrderAsync(string userId, string paymentMethod)
         {
             var cartItems = await _context.CartItems
                 .Where(c => c.UserId == userId)
